@@ -21,7 +21,8 @@ const DEFAULT_MESS = [
 let lastDanMuList = [];
 
 let prizeElement = {},
-  lasetPrizeIndex = 0;
+  lasetPrizeIndex = 0,
+  skipPrizeIndex = 0;
 class DanMu {
   constructor(option) {
     if (typeof option !== "object") {
@@ -155,6 +156,8 @@ function setPrizes(pri) {
 
 function showPrizeList(currentPrizeIndex) {
   let currentPrize = prizes[currentPrizeIndex];
+  let readySkipCount = currentPrizeIndex - 6;
+  skipPrizeIndex = readySkipCount;
   if (currentPrize.type === defaultType) {
     currentPrize.count === "不限制";
   }
@@ -163,9 +166,10 @@ function showPrizeList(currentPrizeIndex) {
     if (item.type === defaultType) {
       return true;
     }
-    htmlCode += `<li id="prize-item-${item.type}" class="prize-item ${
-      item.type == currentPrize.type ? "shine" : ""
-    }">
+    htmlCode += `<li id="prize-item-${item.type}" class="prize-item 
+      ${item.type == currentPrize.type ? "shine" : ""}
+      ${--readySkipCount > 0 ? "hidden" : ""}
+    ">
                         <span></span><span></span><span></span><span></span>
                         <div class="prize-img">
                             <img src="${item.img}" alt="${item.title}">
@@ -244,6 +248,12 @@ let setPrizeData = (function () {
       prizeElement.prizeText.textContent = currentPrize.title;
 
       lasetPrizeIndex = currentPrizeIndex;
+
+      if (skipPrizeIndex > 0) {
+        let newPrize = prizes[skipPrizeIndex--];
+        let newBox = document.querySelector(`#prize-item-${newPrize.type}`);
+        newBox.classList.remove("hidden");
+      }
     }
 
     if (currentPrizeIndex === 0) {

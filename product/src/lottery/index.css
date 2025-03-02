@@ -340,6 +340,11 @@ button:active {
   transform: translateY(-50%);
 }
 
+.hidden {
+  display:none;
+  list-style-type:none;
+}
+
 .shine {
   box-shadow: 0 0 15px 0 rgba(0, 255, 255, 0.5);
   transform: scale(1.2);
