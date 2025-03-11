@@ -7,9 +7,11 @@
 
   ~~(function setSize() {
     //定义canvas的宽高，让他跟浏览器的窗口的宽高相同
-    window.onresize = arguments.callee;
-    w = window.innerWidth;
-    h = window.innerHeight;
+    // TypeError: 'caller', 'callee', and 'arguments' properties may not be accessed on strict mode functions or the arguments objects for calls to them
+    // window.onresize = arguments.callee;
+    window.onresize = setSize
+    var w = window.innerWidth;
+    var h = window.innerHeight;
     canvas.width = w;
     canvas.height = h;
   })();

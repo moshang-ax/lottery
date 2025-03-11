@@ -8,7 +8,7 @@
 
 ## 技术
 
-技术：Node + Express + Three.js
+技术：Node + Express + Three.js + **Vite**
 
 后台通过`Express`实现
 

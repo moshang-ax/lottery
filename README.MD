@@ -3,13 +3,13 @@
 Annual dinner lottery program, 3D sphere raffle, support for configuration of prize information, import participants information by `Excel`, and export lottery results by `Excel`
 If programm is helpful for you😎😎😎, it will be greatful to comment us with⭐**star**⭐ 😘😘😘😍🥰🎉🎈🎃
 
-[点击跳转至中文使用文档](https://github.com/moshang-xc/lottery/blob/master/README-ZH_CN.MD)
+[点击跳转至中文使用文档](https://github.com/cloydlau/lottery/blob/vite/README-ZH_CN.MD)
 
 > Try it now:  [https://moshang-ax.github.io/lottery/](https://moshang-ax.github.io/lottery/)
 
 ## Technology Stack
 
-Technology stack: Node + Express + Three.js
+Technology stack: Node + Express + Three.js + **Vite**
 
 Server: Express + Node
 
@@ -37,7 +37,7 @@ Web Page: Three.js, References to the official 3D example of `Three.js`
 
 ## Install
 ```
-git clone https://github.com/moshang-xc/lottery.git
+git clone https://github.com/cloydlau/lottery.git
 
 cd lottery
 

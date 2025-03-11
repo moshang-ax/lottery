@@ -1,5 +1,5 @@
 import "./index.css";
-import "../css/animate.min.css";
+import "./animate.min.css";
 import "./canvas.js";
 import {
   addQipao,

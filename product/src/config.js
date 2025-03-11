@@ -1,4 +1,4 @@
-const NUMBER_MATRIX = [
+export const NUMBER_MATRIX = [
   [
     // 0
     [0, 0],
@@ -135,8 +135,4 @@ const NUMBER_MATRIX = [
     [1, 4],
     [2, 4]
   ]
-];
-
-module.exports = {
-  NUMBER_MATRIX
-};
+]
