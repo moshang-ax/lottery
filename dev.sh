@@ -5,3 +5,6 @@ docker run --rm -it \
     -p 443:443 \
     -v "$(pwd)"/server/data:/lottery/server/data/ \
      lottery:$TAG
+
+
+#### To build the image, run:
