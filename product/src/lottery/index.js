@@ -541,7 +541,6 @@ function selectCard(duration = 600) {
       .easing(TWEEN.Easing.Exponential.InOut)
       .start();
 
-    object.element.classList.add("prize");
     tag++;
   });
 
@@ -550,7 +549,10 @@ function selectCard(duration = 600) {
     .onUpdate(render)
     .start()
     .onComplete(() => {
-      // 动画结束后可以操作
+      // 动画结束后统一添加特效，避免每个卡片反转都触发一次导致卡顿
+      selectedCardIndex.forEach((cardIndex) => {
+        threeDCards[cardIndex].element.classList.add("prize");
+      });
       setLotteryStatus();
     });
 }
