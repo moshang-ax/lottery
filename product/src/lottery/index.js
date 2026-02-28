@@ -634,7 +634,8 @@ function lottery() {
     }
 
     for (let i = 0; i < perCount; i++) {
-      let luckyId = random(leftCount);
+      // let luckyId = random(leftCount);
+      let luckyId = random_with_weight(basicData.leftUsers);
       currentLuckys.push(basicData.leftUsers.splice(luckyId, 1)[0]);
       leftCount--;
       leftPrizeCount--;
@@ -699,6 +700,25 @@ function changePrize() {
 function random(num) {
   // Math.floor取到0-num-1之间数字的概率是相等的
   return Math.floor(Math.random() * num);
+}
+
+/**
+ * 按照权重随机抽奖
+ * 原理：将所有人员按照权重划分成一个个区间，然后随机生成一个数，落在哪个区间，就抽中哪个人
+ * @param {*} users 需要抽奖的人员信息
+ * @returns 
+ */
+function random_with_weight(users) {
+  let weight = users.map(item => item[3]),
+    total = weight.reduce((a, b) => a + b, 0),
+    random = Math.random() * total,
+    index = 0;
+
+  while (random > weight[index]) {
+    random -= weight[index];
+    index++;
+  }
+  return index;
 }
 
 /**
