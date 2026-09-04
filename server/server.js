@@ -246,28 +246,71 @@ function getLeftUsers() {
 
 loadData();
 
+/**
+ * 从 startPort 开始监听，端口被占用时自动 +1 重试（最多 retries 次），
+ * 成功后打印实际访问端口；范围内全被占用则退出进程。
+ */
+function listenWithRetry(startPort, shouldOpen, retries) {
+  let used = 0;
+  const maxTries = retries || 100;
+
+  const attempt = currentPort => {
+    if (used >= maxTries) {
+      global.console.error(
+        `[lottery] 端口 ${startPort} ~ ${startPort + maxTries - 1} 均被占用，无法启动，请先释放端口后重试`
+      );
+      process.exit(1);
+    }
+    used += 1;
+
+    const server = app.listen(currentPort, () => {
+      const address = server.address();
+      const actualPort = address.port;
+      global.console.log(
+        `lottery server listening at http://${address.address}:${actualPort}`
+      );
+      if (actualPort !== Number(startPort)) {
+        global.console.log(
+          `[lottery] 初始端口 ${startPort} 被占用，实际使用端口：${actualPort}`
+        );
+      }
+      if (shouldOpen) {
+        try {
+          opn(`http://127.0.0.1:${actualPort}`).catch(() => {});
+        } catch (e) {
+          /* 打不开浏览器不影响服务运行 */
+        }
+      }
+    });
+
+    server.on("error", err => {
+      if (err && err.code === "EADDRINUSE") {
+        global.console.log(
+          `[lottery] 端口 ${currentPort} 被占用，尝试端口 ${currentPort + 1}...`
+        );
+        attempt(currentPort + 1);
+      } else {
+        global.console.error(`[lottery] 服务启动失败：${err && err.message}`);
+        process.exit(1);
+      }
+    });
+  };
+
+  attempt(Number(startPort) || port);
+}
+
 module.exports = {
   run: function(devPort, noOpen) {
-    let openBrowser = true;
-    if (process.argv.length > 3) {
-      if (process.argv[3] && (process.argv[3] + "").toLowerCase() === "n") {
-        openBrowser = false;
-      }
-    }
-
-    if (noOpen) {
-      openBrowser = noOpen !== "n";
+    let shouldOpen = true;
+    const noOpenFlag = noOpen || process.argv[3];
+    if (noOpenFlag && String(noOpenFlag).toLowerCase() === "n") {
+      shouldOpen = false;
     }
 
     if (devPort) {
       port = devPort;
     }
 
-    let server = app.listen(port, () => {
-      let host = server.address().address;
-      let port = server.address().port;
-      global.console.log(`lottery server listenig at http://${host}:${port}`);
-      openBrowser && opn(`http://127.0.0.1:${port}`);
-    });
+    listenWithRetry(port, shouldOpen);
   }
 };
