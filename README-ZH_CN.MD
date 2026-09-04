@@ -1,5 +1,7 @@
 # 抽奖程序
 
+**本项目已基于 Vue 3 + Vite 重构**
+
 年会抽奖程序，3D 球体抽奖，支持奖品信息配置，参与抽奖人员信息`Excel`导入，抽奖结果`Excel`导出
 
 如果该程序对你有帮助😎😎😎，希望给个⭐**star**⭐喔。😘😘😘😍🥰🎉🎈🎃
@@ -8,11 +10,12 @@
 
 ## 技术
 
-技术：Node + Express + Three.js
+前端：Vue 3 + Vite + Three.js（CSS3D）
+后端：Node + Express
 
-后台通过`Express`实现
-
-前端抽奖界面通过`Three.js`实现 3D 抽奖球，引用了`Three.js`的官方 3D 示例
+- 前端基于 **Vue 3** 组件化重构，构建工具由 webpack 迁移至 **Vite**，冷启动与热更新体验更好
+- 3D 抽奖球使用 **Three.js** 的 CSS3D 渲染实现；为保证界面效果与原版一致，`Three.js` 及相关辅助库（`CSS3DRenderer.js`、`TrackballControls.js`、`tween.js`）仍以全局脚本方式从 `product/public/lib` 引入
+- 数据服务由 **Express** 提供，接口契约与旧版保持一致，未做破坏性变更
 
 ## 功能描述：
 
@@ -47,13 +50,13 @@ npm install
 cd ../product
 npm install
 
-# 打包
+# 打包（生成 dist 产物，供 npm run serve 部署）
 npm run build
 
-# 运行
+# 运行（Express 托管 dist，初始端口 8888，端口被占用时自动切换并打印实际端口）
 npm run serve
 
-# 开发调试
+# 开发调试（Vite 开发服务默认 9000，自动拉起 Express 数据服务，端口占用均会自选空闲端口）
 npm run dev
 
 ```
@@ -62,27 +65,42 @@ npm run dev
 
 ```
 Lottery
-├── product
-│   ├── src
-│   │   ├── lottery
-│   │   │   └── index.js
-│   │   ├── lib
-│   │   ├── img
-│   │   ├── css
-│   │   └── data
-│   ├── package.json
-│   └── webpack.config.js
-├── server
-│   ├── config.js
-│   ├── server.js
-│   └── package.js
+├── product                          # 前端（Vue 3 + Vite）
+│   ├── index.html                   # Vite 入口页面
+│   ├── vite.config.js               # 构建 / 开发服务配置（含数据服务端口探测）
+│   ├── public                       # 静态资源，构建时原样拷贝
+│   │   ├── img                      # 奖品图片
+│   │   ├── css                      # 全局样式
+│   │   ├── data
+│   │   └── lib                      # three.js / CSS3DRenderer / tween 等全局库
+│   └── src
+│       ├── main.js                  # 应用入口
+│       ├── App.vue
+│       ├── api
+│       │   └── index.js             # 后端接口请求封装
+│       ├── lottery                  # 抽奖核心逻辑（3D 引擎、抽奖状态）
+│       │   ├── engine.js            # 3D 名牌球引擎（Three.js CSS3D）
+│       │   ├── store.js             # 全局响应式状态
+│       │   ├── config.js
+│       │   └── index.css
+│       └── components               # Vue 组件
+│           ├── ControlPanel.vue
+│           ├── MusicControl.vue
+│           ├── PrizeBar.vue
+│           ├── QipaoList.vue
+│           └── StarCanvas.vue
+└── server                           # 后端（Express 数据服务）
+    ├── config.js                    # 奖品信息配置
+    ├── server.js                    # 服务入口（端口被占用时自动切换）
+    ├── help.js
+    ├── data                         # 抽奖用户 / 结果数据
+    └── cache
 ```
 
-> 1. product 为前端页面目录
-> 2. package.josn web 项目配置文件
-> 3. webpack.config.js 打包配置文件
-> 4. server 为服务器目录
-> 5. config 为奖品信息的配置文件
+> 1. product 为前端页面目录（Vue 3 + Vite）
+> 2. public 目录下的静态资源构建时会原样拷贝到产物中
+> 3. vite.config.js 为构建 / 开发服务配置文件
+> 4. server 为后端数据服务目录，其中 config.js 为奖品信息的配置文件
 
 ## 配置信息
 

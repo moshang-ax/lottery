@@ -1,5 +1,7 @@
 # Lottery program
 
+**This project has been refactored with Vue 3 + Vite**
+
 Annual dinner lottery program, 3D sphere raffle, support for configuration of prize information, import participants information by `Excel`, and export lottery results by `Excel`
 If programm is helpful for you😎😎😎, it will be greatful to comment us with⭐**star**⭐ 😘😘😘😍🥰🎉🎈🎃
 
@@ -9,11 +11,12 @@ If programm is helpful for you😎😎😎, it will be greatful to comment us wi
 
 ## Technology Stack
 
-Technology stack: Node + Express + Three.js
+Front-end: Vue 3 + Vite + Three.js (CSS3D)
+Back-end: Node + Express
 
-Server: Express + Node
-
-Web Page: Three.js, References to the official 3D example of `Three.js`
+- The front-end was refactored into components with **Vue 3**, and the build tool was migrated from webpack to **Vite** for faster cold start and better HMR
+- The 3D ball is rendered with **Three.js** (CSS3D); to keep the visuals identical to the original version, `Three.js` and its helper libraries (`CSS3DRenderer.js`, `TrackballControls.js`, `tween.js`) are still loaded as global scripts from `product/public/lib`
+- The data service is provided by **Express** with the same API contract as the old version (no breaking changes)
 
 ## Function Description:
 
@@ -49,13 +52,13 @@ npm install
 cd ../product
 npm install
 
-# Package
+# Package (build dist output, used by npm run serve)
 npm run build
 
-# Running
+# Running (Express serves dist, initial port 8888, auto-switches and prints the actual port if occupied)
 npm run serve
 
-# Developing & debugging
+# Developing & debugging (Vite dev server on 9000 by default, auto-starts the Express data service, ports fall back automatically when occupied)
 npm run dev
 
 ```
@@ -63,25 +66,42 @@ npm run dev
 ## Directory Structure
 ```
 Lottery
-├── product
-│   ├── src
-│   │   ├── lottery
-│   │   │   └── index.js
-│   │   ├── lib
-│   │   ├── img
-│   │   ├── css
-│   │   └── data
-│   ├── package.json
-│   └── webpack.config.js
-├── server
-│   ├── config.js
-│   ├── server.js
-│   └── package.js
+├── product                          # Front-end (Vue 3 + Vite)
+│   ├── index.html                   # Vite entry page
+│   ├── vite.config.js               # Build / dev server config
+│   ├── public                       # Static assets, copied as-is on build
+│   │   ├── img                      # Prize images
+│   │   ├── css                      # Global styles
+│   │   ├── data
+│   │   └── lib                      # Global libs: three.js / CSS3DRenderer / tween
+│   └── src
+│       ├── main.js                  # App entry
+│       ├── App.vue
+│       ├── api
+│       │   └── index.js             # Request wrapper for back-end APIs
+│       ├── lottery                  # Lottery core logic (3D engine, state)
+│       │   ├── engine.js            # 3D name-ball engine (Three.js CSS3D)
+│       │   ├── store.js             # Global reactive state
+│       │   ├── config.js
+│       │   └── index.css
+│       └── components               # Vue components
+│           ├── ControlPanel.vue
+│           ├── MusicControl.vue
+│           ├── PrizeBar.vue
+│           ├── QipaoList.vue
+│           └── StarCanvas.vue
+└── server                           # Back-end (Express data service)
+    ├── config.js                    # Prize configuration
+    ├── server.js                    # Service entry (auto-switches port when occupied)
+    ├── help.js
+    ├── data                         # Users / lottery result data
+    └── cache
 ```
 
-> 1. product is Front-end page directory
-> 4. server is Server directory
-> 5. config is Profile for prize information
+> 1. product is the Front-end page directory (Vue 3 + Vite)
+> 2. Static assets under public are copied as-is into the build output
+> 3. vite.config.js is the build / dev server config file
+> 4. server is the data service directory, config.js is the prize configuration file
 
 ## Configuration Information
 ### Lottery personnel list information configuration
